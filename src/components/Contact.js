@@ -7,10 +7,11 @@ import {
   Row,
 } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useFormik } from "formik";
+import { object, string, number, bool } from "yup";
 
 export default function Contact() {
-  const initialFormState = {
+  const initialValues = {
     firstname: "",
     lastname: "",
     telnum: "",
@@ -20,87 +21,32 @@ export default function Contact() {
     message: "",
   };
 
-  const initialBlurState = {
-    firstname: false,
-    lastname: false,
-    telnum: false,
-    email: false,
+  const validationSchema = object({
+    firstname: string()
+      .min(3, "Must be 3 characters or more")
+      .max(15, "Must be 15 characters or less")
+      .required("Required"),
+    lastname: string()
+      .min(3, "Must be 3 characters or more")
+      .max(15, "Must be 15 characters or less")
+      .required("Required"),
+    telnum: number("Only numbers allowed").required("Required"),
+    email: string().email().required("Required"),
+    agree: bool().default(false).required(),
+    contactType: string().matches(/(Tel.|Email)/),
+    message: string().nullable().notRequired(),
+  });
+
+  const onSubmit = (values) => {
+    console.log("Current State is: " + JSON.stringify(values));
+    alert("Current State is: " + JSON.stringify(values));
   };
 
-  const initialErrorState = {
-    firstname: "",
-    lastname: "",
-    telnum: "",
-    email: "",
-  };
-
-  const validationRules = {
-    firstname: [
-      (field) =>
-        field.length >= 3 ? "" : "First Name should be >= 3 characters",
-      (field) =>
-        field.length <= 10 ? "" : "First Name should be <= 10 characters",
-    ],
-    lastname: [
-      (field) =>
-        field.length >= 3 ? "" : "Last Name should be >= 3 characters",
-      (field) =>
-        field.length <= 10 ? "" : "Last Name should be <= 10 characters",
-    ],
-    telnum: [
-      (field) =>
-        new RegExp(/^\d+$/).test(field)
-          ? ""
-          : "Tel. Number should contain only numbers",
-    ],
-    email: [
-      (field) =>
-        field.split("").filter((x) => x === "@").length === 1
-          ? ""
-          : "Email should contain a @",
-    ],
-  };
-
-  const [formState, setFormState] = useState(initialFormState);
-
-  const [blurState, setBlurState] = useState(initialBlurState);
-
-  const [errorState, setErrorState] = useState(initialErrorState);
-
-  function handleValidate(field, value) {
-    if (!blurState[field]) return;
-
-    const error = validationRules[field]
-      .map((rule) => rule(value))
-      .find((message) => message !== "");
-    setErrorState({ ...errorState, [field]: error });
-  }
-
-  function handleInputChange(event) {
-    const target = event.target;
-    const value = target.type === "checkbox" ? target.checked : target.value;
-    const name = target.name;
-    handleValidate(name, value);
-    setFormState({ ...formState, [name]: value });
-  }
-
-  function handleBlurChange(event) {
-    const field = event.target.name;
-    setBlurState({
-      ...blurState,
-      [field]: true,
-    });
-  }
-
-  function handleSubmit(event) {
-    console.log("Current State is: " + JSON.stringify(formState));
-    alert(
-      "Current State is: " +
-        JSON.stringify(formState) +
-        JSON.stringify(errorState)
-    );
-    event.preventDefault();
-  }
+  const formik = useFormik({
+    initialValues,
+    validationSchema,
+    onSubmit,
+  });
 
   return (
     <div className="container">
@@ -168,7 +114,7 @@ export default function Contact() {
           <h3>Send us your Feedback</h3>
         </div>
         <div className="col-12 col-md-9">
-          <Form onSubmit={handleSubmit}>
+          <Form onSubmit={formik.handleSubmit}>
             <Form.Group as={Row} className="mb-3" controlId="formFirstName">
               <Form.Label column sm={2}>
                 First name
@@ -178,13 +124,14 @@ export default function Contact() {
                   type="text"
                   placeholder="First name"
                   name="firstname"
-                  isValid={!errorState.firstname}
-                  isInvalid={errorState.firstname}
-                  onChange={handleInputChange}
-                  onFocus={handleBlurChange}
+                  isValid={!formik.errors.firstname}
+                  isInvalid={formik.errors.firstname}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.firstname}
                 />
                 <Form.Control.Feedback type="invalid">
-                  {errorState.firstname}
+                  {formik.errors.firstname}
                 </Form.Control.Feedback>
               </Col>
             </Form.Group>
@@ -197,13 +144,14 @@ export default function Contact() {
                   type="text"
                   placeholder="Last name"
                   name="lastname"
-                  isValid={!errorState.lastname}
-                  isInvalid={errorState.lastname}
-                  onChange={handleInputChange}
-                  onFocus={handleBlurChange}
+                  isValid={!formik.errors.lastname}
+                  isInvalid={formik.errors.lastname}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.lastname}
                 />
                 <Form.Control.Feedback type="invalid">
-                  {errorState.lastname}
+                  {formik.errors.lastname}
                 </Form.Control.Feedback>
               </Col>
             </Form.Group>
@@ -216,13 +164,14 @@ export default function Contact() {
                   type="tel"
                   placeholder="Tel. Number"
                   name="telnum"
-                  isValid={!errorState.telnum}
-                  isInvalid={errorState.telnum}
-                  onChange={handleInputChange}
-                  onFocus={handleBlurChange}
+                  isValid={!formik.errors.telnum}
+                  isInvalid={formik.errors.telnum}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.telnum}
                 />
                 <Form.Control.Feedback type="invalid">
-                  {errorState.telnum}
+                  {formik.errors.telnum}
                 </Form.Control.Feedback>
               </Col>
             </Form.Group>
@@ -235,13 +184,14 @@ export default function Contact() {
                   type="email"
                   placeholder="Email"
                   name="email"
-                  isValid={!errorState.email}
-                  isInvalid={errorState.email}
-                  onChange={handleInputChange}
-                  onFocus={handleBlurChange}
+                  isValid={!formik.errors.email}
+                  isInvalid={formik.errors.email}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.email}
                 />
                 <Form.Control.Feedback type="invalid">
-                  {errorState.email}
+                  {formik.errors.email}
                 </Form.Control.Feedback>
               </Col>
             </Form.Group>
@@ -252,14 +202,14 @@ export default function Contact() {
                   id={`default-checkbox`}
                   label={<strong>May we contact you?</strong>}
                   name="agree"
-                  onChange={handleInputChange}
+                  onChange={formik.handleChange}
                 />
               </Col>
               <Col md={{ size: 2, offset: 1 }}>
                 <Form.Select
                   aria-label="Default select example"
                   name="contactType"
-                  onChange={handleInputChange}
+                  onChange={formik.handleChange}
                 >
                   <option>Tel.</option>
                   <option>Email</option>
@@ -275,7 +225,7 @@ export default function Contact() {
                   as="textarea"
                   rows={10}
                   name="message"
-                  onChange={handleInputChange}
+                  onChange={formik.handleChange}
                 />
               </Col>
             </Form.Group>
