@@ -1,8 +1,31 @@
-import { Nav, Navbar, Collapse, NavItem } from "react-bootstrap";
-import { useState } from "react";
+import { Nav, Navbar, NavItem, Modal, Button, Form } from "react-bootstrap";
+import { useState, useRef } from "react";
 import { NavLink } from "react-router-dom";
 
 export default function Header() {
+  const username = useRef(null);
+
+  const password = useRef(null);
+
+  const remember = useRef(null);
+
+  const [state, setState] = useState({ isModalOpen: false });
+
+  const toggleModal = () => setState({ isModalOpen: !state.isModalOpen });
+
+  function handleLogin(event) {
+    toggleModal();
+    alert(
+      "Username: " +
+        username.current.value +
+        " Password: " +
+        password.current.value +
+        " Remember: " +
+        remember.current.checked
+    );
+    event.preventDefault();
+  }
+
   return (
     <div>
       <Navbar dark expand="md" className="navbar-dark">
@@ -39,6 +62,13 @@ export default function Header() {
                 </NavLink>
               </NavItem>
             </Nav>
+            <Nav className="ms-auto" navbar>
+              <NavItem>
+                <Button variant="outline-secondary" onClick={toggleModal}>
+                  <span className="fa fa-sign-in fa-lg"></span> Login
+                </Button>
+              </NavItem>
+            </Nav>
           </Navbar.Collapse>
           {/* </Collapse> */}
         </div>
@@ -57,6 +87,48 @@ export default function Header() {
           </div>
         </div>
       </div>
+      <Modal show={state.isModalOpen} onHide={toggleModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Login</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group className="mb-3">
+              <Form.Label>
+                <b>username</b>
+              </Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="username"
+                name="username"
+                ref={username}
+              ></Form.Control>
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>
+                <b>password</b>
+              </Form.Label>
+              <Form.Control
+                type="password"
+                placeholder="password"
+                name="password"
+                ref={password}
+              ></Form.Control>
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Check
+                type="checkbox"
+                id="default-checkbox"
+                label="remember me"
+                ref={remember}
+              />
+            </Form.Group>
+            <Button variant="primary" onClick={handleLogin}>
+              Login
+            </Button>
+          </Form>
+        </Modal.Body>
+      </Modal>
     </div>
   );
 }

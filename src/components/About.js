@@ -5,12 +5,12 @@ export default function About(props) {
   function RenderLeader({ leader }) {
     return (
       <>
-        <div class="m-4">
-          <div class="d-flex">
-            <div class="flex-shrink-0">
+        <div className="m-4">
+          <div className="d-flex">
+            <div className="flex-shrink-0">
               <img src={leader.image} alt={leader.name} />
             </div>
-            <div class="flex-grow-1 ms-3">
+            <div className="flex-grow-1 ms-3">
               <h5>{leader.name}</h5>
               <h6>{leader.designation}</h6>
               <p>{leader.description}</p>
