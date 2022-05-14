@@ -10,7 +10,7 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 
 export default function Contact() {
-  const [state, setState] = useState({
+  const initialFormState = {
     firstname: "",
     lastname: "",
     telnum: "",
@@ -18,20 +18,90 @@ export default function Contact() {
     agree: false,
     contactType: "Tel.",
     message: "",
-  });
+  };
+
+  const initialBlurState = {
+    firstname: false,
+    lastname: false,
+    telnum: false,
+    email: false,
+  };
+
+  const initialErrorState = {
+    firstname: "",
+    lastname: "",
+    telnum: "",
+    email: "",
+  };
+
+  const validationRules = {
+    firstname: [
+      (field) =>
+        field.length >= 3 ? "" : "First Name should be >= 3 characters",
+      (field) =>
+        field.length <= 10 ? "" : "First Name should be <= 10 characters",
+    ],
+    lastname: [
+      (field) =>
+        field.length >= 3 ? "" : "Last Name should be >= 3 characters",
+      (field) =>
+        field.length <= 10 ? "" : "Last Name should be <= 10 characters",
+    ],
+    telnum: [
+      (field) =>
+        new RegExp(/^\d+$/).test(field)
+          ? ""
+          : "Tel. Number should contain only numbers",
+    ],
+    email: [
+      (field) =>
+        field.split("").filter((x) => x === "@").length === 1
+          ? ""
+          : "Email should contain a @",
+    ],
+  };
+
+  const [formState, setFormState] = useState(initialFormState);
+
+  const [blurState, setBlurState] = useState(initialBlurState);
+
+  const [errorState, setErrorState] = useState(initialErrorState);
+
+  function handleValidate(field, value) {
+    if (!blurState[field]) return;
+
+    const error = validationRules[field]
+      .map((rule) => rule(value))
+      .find((message) => message !== "");
+    setErrorState({ ...errorState, [field]: error });
+  }
 
   function handleInputChange(event) {
     const target = event.target;
     const value = target.type === "checkbox" ? target.checked : target.value;
     const name = target.name;
-    setState({ ...state, [name]: value });
+    handleValidate(name, value);
+    setFormState({ ...formState, [name]: value });
+  }
+
+  function handleBlurChange(event) {
+    const field = event.target.name;
+    setBlurState({
+      ...blurState,
+      [field]: true,
+    });
   }
 
   function handleSubmit(event) {
-    console.log("Current State is: " + JSON.stringify(state));
-    alert("Current State is: " + JSON.stringify(state));
+    console.log("Current State is: " + JSON.stringify(formState));
+    alert(
+      "Current State is: " +
+        JSON.stringify(formState) +
+        JSON.stringify(errorState)
+    );
     event.preventDefault();
   }
+
   return (
     <div className="container">
       <div className="row">
@@ -108,7 +178,9 @@ export default function Contact() {
                   type="text"
                   placeholder="First name"
                   name="firstname"
+                  isValid={!errorState.firstname}
                   onChange={handleInputChange}
+                  onFocus={handleBlurChange}
                 />
               </Col>
             </Form.Group>
@@ -121,7 +193,9 @@ export default function Contact() {
                   type="text"
                   placeholder="Last name"
                   name="lastname"
+                  isValid={!errorState.lastname}
                   onChange={handleInputChange}
+                  onFocus={handleBlurChange}
                 />
               </Col>
             </Form.Group>
@@ -134,7 +208,9 @@ export default function Contact() {
                   type="tel"
                   placeholder="Tel. Number"
                   name="telnum"
+                  isValid={!errorState.telnum}
                   onChange={handleInputChange}
+                  onFocus={handleBlurChange}
                 />
               </Col>
             </Form.Group>
@@ -147,7 +223,9 @@ export default function Contact() {
                   type="email"
                   placeholder="Email"
                   name="email"
+                  isValid={!errorState.email}
                   onChange={handleInputChange}
+                  onFocus={handleBlurChange}
                 />
               </Col>
             </Form.Group>
