@@ -179,9 +179,13 @@ export default function Contact() {
                   placeholder="First name"
                   name="firstname"
                   isValid={!errorState.firstname}
+                  isInvalid={errorState.firstname}
                   onChange={handleInputChange}
                   onFocus={handleBlurChange}
                 />
+                <Form.Control.Feedback type="invalid">
+                  {errorState.firstname}
+                </Form.Control.Feedback>
               </Col>
             </Form.Group>
             <Form.Group as={Row} className="mb-3" controlId="formLastName">
@@ -194,9 +198,13 @@ export default function Contact() {
                   placeholder="Last name"
                   name="lastname"
                   isValid={!errorState.lastname}
+                  isInvalid={errorState.lastname}
                   onChange={handleInputChange}
                   onFocus={handleBlurChange}
                 />
+                <Form.Control.Feedback type="invalid">
+                  {errorState.lastname}
+                </Form.Control.Feedback>
               </Col>
             </Form.Group>
             <Form.Group as={Row} className="mb-3" controlId="formLastName">
@@ -209,9 +217,13 @@ export default function Contact() {
                   placeholder="Tel. Number"
                   name="telnum"
                   isValid={!errorState.telnum}
+                  isInvalid={errorState.telnum}
                   onChange={handleInputChange}
                   onFocus={handleBlurChange}
                 />
+                <Form.Control.Feedback type="invalid">
+                  {errorState.telnum}
+                </Form.Control.Feedback>
               </Col>
             </Form.Group>
             <Form.Group as={Row} className="mb-3" controlId="formEmail">
@@ -224,9 +236,13 @@ export default function Contact() {
                   placeholder="Email"
                   name="email"
                   isValid={!errorState.email}
+                  isInvalid={errorState.email}
                   onChange={handleInputChange}
                   onFocus={handleBlurChange}
                 />
+                <Form.Control.Feedback type="invalid">
+                  {errorState.email}
+                </Form.Control.Feedback>
               </Col>
             </Form.Group>
             <Form.Group as={Row} className="mb-3" controlId="formCheckBox">
