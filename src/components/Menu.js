@@ -1,7 +1,7 @@
 import { Card } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
-function RenderMenuItem({ dish, onCLick }) {
+function RenderMenuItem({ dish }) {
   return (
     <Card key={dish.id}>
       <Link to={`/menu/${dish.id}`}>

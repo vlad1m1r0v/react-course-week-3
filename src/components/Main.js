@@ -1,7 +1,3 @@
-import { DISHES } from "../shared/dishes";
-import { COMMENTS } from "../shared/comments";
-import { PROMOTIONS } from "../shared/promotions";
-import { LEADERS } from "../shared/leaders";
 import DishDetail from "./DishDetail";
 import Menu from "./Menu";
 import Header from "./Header";
@@ -9,27 +5,21 @@ import Footer from "./Footer";
 import Contact from "./Contact";
 import Home from "./Home";
 import About from "./About";
-import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { Route, Routes, Navigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 export default function Main() {
-  const [state, setState] = useState({
-    dishes: DISHES,
-    comments: COMMENTS,
-    promotions: PROMOTIONS,
-    leaders: LEADERS,
-    selectedDish: null,
-  });
-
-  const onDishSelect = (dishId) => setState({ ...state, selectedDish: dishId });
+  const { dishes, comments, promotions, leaders } = useSelector(
+    (store) => store
+  );
 
   const HomePage = () => {
     return (
       <Home
-        dish={state.dishes.find((dish) => dish.featured)}
-        promotion={state.promotions.find((promo) => promo.featured)}
-        leader={state.leaders.find((leader) => leader.featured)}
+        dish={dishes.find((dish) => dish.featured)}
+        promotion={promotions.find((promo) => promo.featured)}
+        leader={leaders.find((leader) => leader.featured)}
       />
     );
   };
@@ -39,8 +29,8 @@ export default function Main() {
 
     return (
       <DishDetail
-        dish={state.dishes.find((dish) => dish.id === Number(dishId))}
-        comments={state.comments.filter(
+        dish={dishes.find((dish) => dish.id === Number(dishId))}
+        comments={comments.filter(
           (comment) => comment.dishId === Number(dishId)
         )}
       />
@@ -52,23 +42,12 @@ export default function Main() {
       <Header />
       <Routes>
         <Route exact path="/home" element={<HomePage />} />
-        <Route
-          exact
-          path="/menu"
-          element={<Menu dishes={state.dishes} onClick={onDishSelect} />}
-        />
+        <Route exact path="/menu" element={<Menu dishes={dishes} />} />
         <Route exact path="/contactus" element={<Contact />} />
         <Route exact path="/menu/:dishId" element={<DishWithId />} />
-        <Route
-          exact
-          path="/aboutus"
-          element={<About leaders={state.leaders} />}
-        />
+        <Route exact path="/aboutus" element={<About leaders={leaders} />} />
         <Route path="*" element={<Navigate to="/home" replace />} />
       </Routes>
-      {/* <DishDetail
-        dish={state.dishes.find((dish) => dish.id === state.selectedDish)}
-      /> */}
       <Footer />
     </>
   );
