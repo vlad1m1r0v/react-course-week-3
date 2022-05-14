@@ -1,12 +1,15 @@
 import { Card } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 function RenderMenuItem({ dish, onCLick }) {
   return (
-    <Card key={dish.id} onClick={() => onCLick(dish.id)}>
-      <Card.Img src={dish.image} alt={dish.name} />
-      <Card.ImgOverlay>
-        <Card.Title>{dish.name}</Card.Title>
-      </Card.ImgOverlay>
+    <Card key={dish.id}>
+      <Link to={`/menu/${dish.id}`}>
+        <Card.Img src={dish.image} alt={dish.name} />
+        <Card.ImgOverlay>
+          <Card.Title>{dish.name}</Card.Title>
+        </Card.ImgOverlay>
+      </Link>
     </Card>
   );
 }

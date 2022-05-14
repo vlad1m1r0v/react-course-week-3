@@ -7,9 +7,11 @@ import Menu from "./Menu";
 import Header from "./Header";
 import Footer from "./Footer";
 import Contact from "./Contact";
-import { useState } from "react";
-import { Route, Routes, Navigate } from "react-router-dom";
 import Home from "./Home";
+import About from "./About";
+import { useState } from "react";
+import { useParams } from "react-router-dom";
+import { Route, Routes, Navigate } from "react-router-dom";
 
 export default function Main() {
   const [state, setState] = useState({
@@ -32,6 +34,19 @@ export default function Main() {
     );
   };
 
+  const DishWithId = () => {
+    const { dishId } = useParams();
+
+    return (
+      <DishDetail
+        dish={state.dishes.find((dish) => dish.id === Number(dishId))}
+        comments={state.comments.filter(
+          (comment) => comment.dishId === Number(dishId)
+        )}
+      />
+    );
+  };
+
   return (
     <>
       <Header />
@@ -43,6 +58,12 @@ export default function Main() {
           element={<Menu dishes={state.dishes} onClick={onDishSelect} />}
         />
         <Route exact path="/contactus" element={<Contact />} />
+        <Route exact path="/menu/:dishId" element={<DishWithId />} />
+        <Route
+          exact
+          path="/aboutus"
+          element={<About leaders={state.leaders} />}
+        />
         <Route path="*" element={<Navigate to="/home" replace />} />
       </Routes>
       {/* <DishDetail
